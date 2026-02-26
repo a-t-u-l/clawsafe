@@ -4,6 +4,7 @@ import {
   type ExecApprovalDecision,
 } from "../../infra/exec-approvals.js";
 import type { ExecApprovalManager } from "../exec-approval-manager.js";
+import { auditCommand } from "../overseer.js";
 import {
   ErrorCodes,
   errorShape,
@@ -96,6 +97,35 @@ export function createExecApprovalHandlers(
       record.requestedByConnId = client?.connId ?? null;
       record.requestedByDeviceId = client?.connect?.device?.id ?? null;
       record.requestedByClientId = client?.connect?.client?.id ?? null;
+
+      // ---- 🛡️ CLAWSAFE OVERSEER AUDIT INTERCEPTION ----
+      const fullCommand = [p.command, ...(commandArgv || [])].join(" ");
+      const auditResult = await auditCommand(fullCommand, p.ask || undefined);
+
+      if (auditResult.decision === "UNSAFE") {
+        context.logGateway?.error?.(
+          `Overseer rejected command: ${auditResult.reason} -> ${fullCommand}`,
+        );
+        respond(
+          false,
+          undefined,
+          errorShape(ErrorCodes.INVALID_REQUEST, `Security Audit Failed: ${auditResult.reason}`),
+        );
+        return;
+      }
+
+      // If safe, wrap the execution in the Sandbox
+      if (auditResult.decision === "SAFE" || auditResult.decision === "CAUTION") {
+        // Adjust the command to trigger clawsand.sh
+        // We assume clawsand.sh is in the PATH or we provide the absolute path
+        const sandboxCommand = `/Users/atul/Workspace/ClawSafe/core-source/scripts/clawsand.sh`;
+
+        record.request.command = sandboxCommand;
+        // The old command becomes the arguments to clawsand
+        record.request.commandArgv = ["--", fullCommand];
+      }
+      // -------------------------------------------------
+
       // Use register() to synchronously add to pending map before sending any response.
       // This ensures the approval ID is valid immediately after the "accepted" response.
       let decisionPromise: Promise<

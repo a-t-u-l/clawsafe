@@ -610,6 +610,34 @@ export class OpenClawApp extends LitElement {
     this.applySettings({ ...this.settings, splitRatio: newRatio });
   }
 
+  async handleKillSwitch() {
+    if (
+      !confirm(
+        "⚠️ WARNING: This will immediately terminate all ClawSafe sandboxes and agent processes. Are you sure?",
+      )
+    ) {
+      return;
+    }
+
+    try {
+      if (this.client) {
+        // clawsafe.killswitch is the correct RPC method registered on the gateway.
+        // It runs scripts/kill.sh server-side to tear down all Docker containers
+        // and agent processes. The previous debug.call was not a valid gateway method.
+        const res = await this.client.request<{ ok: boolean; message: string }>(
+          "clawsafe.killswitch",
+          {},
+        );
+        alert(`✅ ${res?.message ?? "ClawSafe Kill-Switch Activated. Environment neutralized."}`);
+      } else {
+        alert("❌ Disconnected from Gateway. Cannot initiate Kill-Switch.");
+      }
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      alert("Failed to trigger remote Kill-Switch via Gateway: " + msg);
+    }
+  }
+
   render() {
     return renderApp(this as unknown as AppViewState);
   }

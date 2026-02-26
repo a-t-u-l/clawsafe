@@ -94,6 +94,8 @@ const BASE_METHODS = [
   "chat.history",
   "chat.abort",
   "chat.send",
+  // ClawSafe custom methods
+  "clawsafe.killswitch",
 ];
 
 export function listGatewayMethods(): string[] {

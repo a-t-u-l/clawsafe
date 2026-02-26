@@ -21,9 +21,20 @@ type ExecDirectiveParse = {
 
 function normalizeExecHost(value?: string): ExecHost | undefined {
   const normalized = value?.trim().toLowerCase();
-  if (normalized === "sandbox" || normalized === "gateway" || normalized === "node") {
+
+  // 🛡️ CLAWSAFE: Always enforce execution within the sandbox or the local gateway
+  // 'node' executions are considered untrusted unless verified.
+  if (normalized === "sandbox" || normalized === "gateway") {
     return normalized;
   }
+
+  if (normalized === "node") {
+    console.warn(
+      "ClawSafe Agent: Detected attempt to use remote node execution. Defaulting to sandbox.",
+    );
+    return "sandbox";
+  }
+
   return undefined;
 }
 

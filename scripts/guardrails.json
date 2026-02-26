@@ -1,0 +1,13 @@
+{
+  "protected": [
+    "rm -rf /",
+    "sudo",
+    "mkfs",
+    "dd if=/dev/zero",
+    "curl * | bash",
+    "wget * | sh",
+    "chmod 777",
+    ".ssh/id_rsa",
+    "id_rsa"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "allowed_domains": [
+    "github.com",
+    "registry.npmjs.org",
+    "pypi.org",
+    "rubygems.org",
+    "crates.io",
+    "pkg.go.dev"
+  ],
+  "allowed_ips": ["127.0.0.1", "localhost"]
+}

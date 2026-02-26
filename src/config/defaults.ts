@@ -29,6 +29,10 @@ const DEFAULT_MODEL_ALIASES: Readonly<Record<string, string>> = {
   // Google Gemini (3.x are preview ids in the catalog)
   gemini: "google/gemini-3-pro-preview",
   "gemini-flash": "google/gemini-3-flash-preview",
+
+  // Local (ClawSafe — maps shorthand aliases to local Ollama models)
+  local: "ollama/llama3.1",
+  "local-small": "ollama/llama3.2:1b",
 };
 
 const DEFAULT_MODEL_COST: ModelDefinitionConfig["cost"] = {

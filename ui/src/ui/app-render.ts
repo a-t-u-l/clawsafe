@@ -233,11 +233,11 @@ export function renderApp(state: AppViewState) {
           </button>
           <div class="brand">
             <div class="brand-logo">
-              <img src=${basePath ? `${basePath}/favicon.svg` : "/favicon.svg"} alt="OpenClaw" />
+              <img src=${basePath ? `${basePath}/favicon.svg` : "/favicon.svg"} alt="ClawSafe" />
             </div>
             <div class="brand-text">
-              <div class="brand-title">OPENCLAW</div>
-              <div class="brand-sub">Gateway Dashboard</div>
+              <div class="brand-title">CLAWSAFE</div>
+              <div class="brand-sub">Security Gateway</div>
             </div>
           </div>
         </div>
@@ -297,6 +297,29 @@ export function renderApp(state: AppViewState) {
               <span class="nav-item__icon" aria-hidden="true">${icons.book}</span>
               <span class="nav-item__text">${t("common.docs")}</span>
             </a>
+          </div>
+        </div>
+
+        <!-- 🛡️ CLAWSAFE SECURITY SHIELD -->
+        <div class="nav-group nav-group--links system-shield">
+          <div class="nav-label nav-label--static">
+            <span class="nav-label__text">Security Status</span>
+          </div>
+          <div class="nav-group__items">
+            <button 
+              class="nav-item btn-danger btn--sm" 
+              style="width:100%; justify-content:flex-start; margin-top: 8px; font-weight: bold; background-color: #ff3b30; color: white;"
+              title="Instantly Neutralize ClawSafe Sandboxes"
+              // @ts-ignore
+              @click=${() => (state.handleKillSwitch ? state.handleKillSwitch() : alert("Killswitch booting..."))}
+            >
+              <span class="nav-item__icon" aria-hidden="true" style="color: white;">⚡</span>
+              <span class="nav-item__text">INITIATE KILL-SWITCH</span>
+            </button>
+            <div style="padding: 8px 12px; font-size: 0.75rem; color: #a4a4a4; opacity: 0.8; display: flex; align-items: center; gap: 6px;">
+               <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background-color: ${state.connected ? "#34c759" : "#ff3b30"};"></span>
+               Overseer ${state.connected ? "Active" : "Offline"}
+            </div>
           </div>
         </div>
       </aside>
